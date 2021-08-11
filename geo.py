@@ -13,7 +13,7 @@ MKAD_coordinates = [37.632206, 55.898947]
 
 
 @distance_bp.route('/')
-def index():
+def mkad_distance():
     address = request.args.get('address')
     res = yandex_api.get_coordinate(address)
     
@@ -23,14 +23,14 @@ def index():
         # Check if point inside bbox of MKAD coordinate
         if pos[1] > MKAD_bbox[1] and pos[1] < MKAD_bbox[3] and pos[0] > MKAD_bbox[0] and pos[0] < MKAD_bbox[2]:
             # Return original pos 
-            return " ".join(pos)
+            return str(pos[0]) + ' ' + str(pos[1]) 
         else:
             # Calculate distance in kilometer using Haversine formula
             p = pi/180
             a = (0.5 - cos((MKAD_coordinates[1]-pos[1])*p) / 2 
                 + cos(pos[1]*p) * cos(MKAD_coordinates[1] * p)
                 * (1-cos((MKAD_coordinates[0]-pos[0])*p)) / 2)
-            return str(12742 * asin(sqrt(a)))
+            return str(round(12742 * asin(sqrt(a)), 3)) + ' km'
     else:
         return Response(
             json.dumps(res['content']),
