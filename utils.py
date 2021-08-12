@@ -1,6 +1,27 @@
 import requests
+from datetime import datetime
+
+class Log:
+    '''
+    Class for logging apps
+    '''
+    def __init__(self):
+        self.file = open('.log', 'a+')
+        self.file.close()
+    
+    def write(self, text):
+        self.file = open('.log', 'a+')
+        now = datetime.now()
+        time = now.strftime("%d/%m/%Y %H:%M:%S")
+        result = time +'\t'+text
+        self.file.write(result+'\n')
+        self.file.close()
+
 
 class YandexAPI:
+    '''
+    Class for access Yandex API
+    '''
     def __init__(self, apikey):
         self.apikey = apikey
     
@@ -18,7 +39,7 @@ class YandexAPI:
                 }
             else:
                 return {
-                    'status_code': 404,
+                    'status_code': 400,
                     'content': "Location is not found"
                 }
         elif response.status_code == 403:
